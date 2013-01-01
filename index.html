@@ -1,0 +1,165 @@
+<html>
+<head>
+<title>Subtitles for videos</title>
+</head>
+<style>
+#inf{
+	overflow:auto;
+	width:420px;
+	height:200px;
+	padding-left:10px;
+	border:2px solid black;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+div.cont{
+	margin-top:10px;
+	border:1px solid black;
+	width:400px;
+	height:55px;
+}
+#scont{
+	list-style:none;
+	border:0px solid gray;
+	width:300px;
+	height:25px;
+	margin-left:30px;
+	margin-bottom:5px;
+}
+#footnote{
+	width:400px;
+	height:28px;
+	border:2px solid black;
+	margin-bottom:5px;
+}
+</style>
+<script type='text/javascript' src='jquery-git.js'></script>
+<script type='text/javascript' src='jquery.scrollintoview.js'></script>
+<script type='text/javascript' src='jquery.scrollintoview.min.js'></script>
+<script type='text/javascript' src="http://popcornjs.org/code/dist/popcorn-complete.min.js"></script>
+<script type='text/javascript'>
+
+$(window).load(function(){
+
+var pop = Popcorn("#video");
+
+var current=1;
+var click=0;
+var save=1;
+var edit=1;
+
+var jsonObj = []; //declare array
+
+
+$("#sub").click(function(){
+	var len=0;
+	console.log(current);
+	$("div.cont").each(function(i, elm) {
+   		len++;
+	});
+	//$("#s").text(len);
+	for (var i = 1; i <= len; i++) {
+   		jsonObj.push({start: $("div[name='"+i+"']").children("span[name='a1']").children("span").text(),
+					  end: $("div[name='"+i+"']").children("span[name='a2']").children("span").text(),
+					  subt: $("div[name='"+i+"']").children("li").text()
+					 });
+		//$("#s").append($("div[name='"+i+"']").children("span[name='a1']").children("span").text());
+	}
+	console.log(jsonObj);
+	save=1;
+});
+
+$(window).bind('beforeunload', function(){ 
+	if (!save)
+		return "You haven't saved the changes that you have done";
+});
+
+pop.on( "play",function(){
+	//$("#s").text(current);
+	if (edit){
+	save=0;
+	var mins = Math.round(Math.round(this.currentTime()) / 60);
+	var secs = Math.round(this.currentTime()) % 60;
+	$("div[name='"+current+"']").children("span[name='a1']").children("span").text(mins+":"+secs);
+	}
+});
+
+pop.on( "pause",function(){
+	//$("#s").text(current+"ppp");
+	if (edit){
+	save=0;
+	var mins = Math.round(Math.round(this.currentTime()) / 60);
+	var secs = Math.round(this.currentTime()) % 60;
+	$("div[name='"+current+"']").children("span[name='a2']").children("span").text(mins+":"+secs);
+	current=current+1;
+	$("div[name!='"+current+"']").css('background-color','#ffffff');
+	$("div[name='"+current+"']").css('background-color','#eeeeee');
+	$("div[name='"+(current+1)+"']").scrollintoview({duration: 1000,direction: "vertical"});
+	}
+});
+
+$("#ply").click(function(){
+	edit=0;
+	//$("#s").text(pop.duration());
+	$("div.cont").each(function(i, elm) {
+			var n1=$("div[name='"+i+"']").children("span[name='a1']").children("span").text().split(":");
+			var n2=$("div[name='"+i+"']").children("span[name='a2']").children("span").text().split(":");
+			var sec1=n1[0]*60+n1[1];
+			var sec2=n2[0]*60+n2[1];
+   			pop.code({
+				start: sec1,
+				end: sec2,
+				onStart: function( options ) {
+         				document.getElementById( "footnote" ).innerHTML = $("div[name='"+i+"']").children("li").text();
+				},
+				onEnd: function( options ) {
+						document.getElementById( "footnote" ).innerHTML = "";
+				}
+			});
+	});
+	pop.currentTime(0);
+	pop.play();
+});
+
+$("#vid").click(function(){
+	edit=1;
+	pop = Popcorn("#video");
+});
+
+$("div[name='"+current+"']").css('background-color','#eeeeee');
+
+
+$("div.cont").click(function(){
+	current=parseInt($(this).attr('name'));
+	//$("#s").text(current);
+	$("div[name!='"+current+"']").css('background-color','#ffffff');
+	$("div[name='"+current+"']").css('background-color','#eeeeee');
+});
+
+$("#scont").click(function() {
+	save=0;
+	pop.pause();
+});
+
+}); 
+
+</script>
+<body>
+<video height="180" width="300" id="video" controls> 
+<source src="http://videos.mozilla.org/serv/webmademovies/popcornmakerpost.webm"></source>
+</video>
+<div id="footnote"></div>
+<div id="s"></div>
+<div id="inf">
+<div class="cont" name="1"><span style="text-align:left;"  name="a1">Start Time:<span></span></span><span style="float:right;"name="a2">End Time:<span></span></span><li id="scont" contenteditable="true" spellcheck="false">Anything inside this div will be editable1!</li></div>
+<div class="cont" name="2"><span style="text-align:left;"  name="a1">Start Time:<span></span></span><span style="float:right;" name="a2">End Time:<span></span></span><li id="scont" contenteditable="true" spellcheck="false">Anything inside this div will be editable2!</li></div>
+<div class="cont" name="3"><span style="text-align:left;"  name="a1">Start Time:<span></span></span><span style="float:right;" name="a2">End Time:<span></span></span><li id="scont" contenteditable="true" spellcheck="false">Anything inside this div will be editable3!</li></div>
+<div class="cont" name="4"><span style="text-align:left;"  name="a1">Start Time:<span></span></span><span style="float:right;" name="a2">End Time:<span></span></span><li id="scont" contenteditable="true" spellcheck="false">Anything inside this div will be editable4!</li></div>
+<div class="cont" name="5"><span style="text-align:left;"  name="a1">Start Time:<span></span></span><span style="float:right;" name="a2">End Time:<span></span></span><li id="scont" contenteditable="true" spellcheck="false">Anything inside this div will be editable5!</li></div>
+<div class="cont" name="6"><span style="text-align:left;"  name="a1">Start Time:<span></span></span><span style="float:right;" name="a2">End Time:<span></span></span><li id="scont" contenteditable="true" spellcheck="false">Anything inside this div will be editable6!</li></div>
+</div>
+<button id="ply">Play video With Subtitle</button>
+<button id="vid">Change Subtitle</button>
+<button id="sub">Save</button>
+</body>
+</html>
