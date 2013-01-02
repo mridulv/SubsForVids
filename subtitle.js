@@ -103,9 +103,7 @@ $("#scont").click(function() {
 });
 
 $("#new").click(function(){
-	$("#inf").append('<div class="cont" name="7"><span style="text-align:left;"  
-		name="a1">Start Time:<span></span></span><span style="float:right;" name="a2">End Time:<span></span></span>
-		<li id="scont" contenteditable="true" spellcheck="false">Anything inside this div will be editable6!</li></div>');
+	$("#inf").append('<div class="cont" name="7"><span style="text-align:left;"  name="a1">Start Time:<span></span></span><span style="float:right;" name="a2">End Time:<span></span></span><li id="scont" contenteditable="true" spellcheck="false">Anything inside this div will be editable6!</li></div>');
 });
 
 });
